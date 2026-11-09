@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net8.0</TargetFramework></PropertyGroup>
+  <ItemGroup>
+    <Compile Include="../../src/RolCombat/Rules.cs" Link="Rules.cs"/>
+    <Compile Include="../../src/RolCombat/RuntimeState.cs" Link="RuntimeState.cs"/>
+    <PackageReference Include="Mono.Cecil" Version="0.11.4"/>
+  </ItemGroup>
+</Project>

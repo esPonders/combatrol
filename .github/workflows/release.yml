@@ -1,0 +1,29 @@
+name: Publish RolCombat 1.0.0
+on:
+  push:
+    branches: [main]
+    paths: [.github/workflows/release.yml, RELEASE_NOTES.md]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: release-v1.0.0
+  cancel-in-progress: false
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - run: dotnet build src/RolCombat/RolCombat.csproj -c Release -p:RestoreLockedMode=true
+      - run: dotnet run --project tests/RolCombatChecks -c Release
+      - run: python3 tools/package.py
+      - name: Publish release and attach r2modman ZIP
+        run: python3 tools/release.py
+        env:
+          GITHUB_TOKEN: ${{ github.token }}

@@ -1,0 +1,8 @@
+**/bin/
+**/obj/
+dist/
+*.user
+*.jsonl
+__pycache__/
+BepInEx/
+Datos/
