@@ -1,11 +1,11 @@
-# RolCombat 1.0.3
+# RolCombat 1.0.4
 
-Enemies cannot accumulate additional stagger damage while their stagger animation is active. Health damage and critical damage bonuses are unchanged; their existing stagger meter continues recovering normally and is not forcibly emptied.
+Wild enemies now reset their stagger meter to zero when stagger is triggered. They remain immune to additional stagger damage throughout the stagger animation, so the next stagger must be built from an empty meter after recovery.
 
-Once the animation ends, attacks accumulate stagger again. This rule applies to wild enemies at all star levels; players and tamed creatures retain their normal behavior. Tower Numbness already rejects staggered enemies and does not pause recovery during this state.
+Critical damage and stagger animation duration are unchanged. Players and tamed creatures keep their native behavior. Tower Numbness cannot add stagger or pause recovery while the enemy is staggered.
 
-Elite damage remains +20% per star. Elite stagger thresholds and recovery remain equivalent to the unstarred creature of the same type. Tower defense, Agility, and enemy health bonuses are unchanged.
+Elite extra health remains 20% above vanilla starred health. Elite damage remains +20% per star. Thresholds and recovery use the equivalent unstarred creature values. Tower and Agility bonuses are unchanged.
 
-Download **Valmods.RolCombat-1.0.3.zip** from **Assets** and import the complete ZIP using **Settings → Import local mod** in r2modman. Disable or remove older copies. All players and dedicated servers must update. Combat Recorder 0.1.7 remains compatible.
+Download **Valmods.RolCombat-1.0.4.zip** from **Assets** and import the complete ZIP using **Settings → Import local mod** in r2modman. Remove or disable older copies. All players and dedicated servers must use the same version and settings. Combat Recorder 0.1.7 remains compatible.
 
-Validated with offline regression and assembly checks. In-game validation is still needed. The preceding release is retired after successful publication.
+Validated against the installed game's meter update order and with offline regression and assembly checks. In-game retesting is still needed. The preceding release is retired after publication succeeds.

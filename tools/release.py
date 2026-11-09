@@ -7,7 +7,7 @@ import urllib.error
 
 root = Path(__file__).resolve().parents[1]
 repo = os.environ['GITHUB_REPOSITORY']
-version = '1.0.3'
+version = '1.0.4'
 asset = root / f'dist/Valmods.RolCombat-{version}.zip'
 assert asset.is_file(), 'Build the package before publishing'
 headers = {'Authorization': 'Bearer ' + os.environ['GITHUB_TOKEN'],
@@ -41,15 +41,15 @@ release = request(api + '/releases/' + str(release['id']), 'PATCH', {
 print(release['html_url'])
 
 # Retire the old release only after the replacement and its asset are published.
-for path in ['/releases/tags/v1.0.2', '/git/ref/tags/v1.0.2']:
+for path in ['/releases/tags/v1.0.3', '/git/ref/tags/v1.0.3']:
     try:
         old = request(api + path)
     except urllib.error.HTTPError as error:
         if error.code == 404:
             continue
         raise
-    target = '/releases/' + str(old['id']) if 'releases' in path else '/git/refs/tags/v1.0.2'
+    target = '/releases/' + str(old['id']) if 'releases' in path else '/git/refs/tags/v1.0.3'
     req = urllib.request.Request(api + target, headers=headers, method='DELETE')
     with urllib.request.urlopen(req) as response:
         assert response.status == 204
-print('Retired v1.0.2 release and tag.')
+print('Retired v1.0.3 release and tag.')

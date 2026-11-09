@@ -12,7 +12,7 @@ namespace Valmods.TowerGuard
     public sealed class Plugin : BaseUnityPlugin
     {
         public const string Id = "ponders.valmods.towerguard";
-        public const string Version = "1.0.3";
+        public const string Version = "1.0.4";
         private const string RewardRpc = "Valmods_TowerPreparation_v1";
         internal static Plugin Instance;
         private Harmony harmony;
@@ -452,6 +452,7 @@ namespace Valmods.TowerGuard
                 // Only suppress stagger accumulation; damage and critical bonuses run normally.
                 if (!Plugin.Active || !Plugin.Owned(__instance) ||
                     !Rules.IgnoreStaggerDamage(__instance.IsPlayer(), __instance.IsTamed(), __instance.IsStaggering())) return true;
+                Plugin.Stagger(__instance) = 0f;
                 __result = false;
                 return false;
             }
@@ -460,7 +461,19 @@ namespace Valmods.TowerGuard
     }
     internal static class StaggerPatch
     {
-        internal static void Postfix(Character __instance) { Plugin.Numb.Remove(__instance); }
+        internal static void Postfix(Character __instance)
+        {
+            Plugin.Numb.Remove(__instance);
+            try
+            {
+                // Stagger is triggered after the native meter reaches its threshold.
+                // Clearing the meter does not change the animator or critical-damage window.
+                if (Plugin.Active && Plugin.Owned(__instance) &&
+                    Rules.ResetEnemyStagger(__instance.IsPlayer(), __instance.IsTamed()))
+                    Plugin.Stagger(__instance) = 0f;
+            }
+            catch (Exception ex) { Plugin.Failure(ex); }
+        }
     }
     internal static class TooltipPatch
     {

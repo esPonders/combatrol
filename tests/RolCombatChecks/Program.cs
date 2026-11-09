@@ -20,13 +20,18 @@ internal static class Program
         Check(!Rules.IgnoreStaggerDamage(true, false, true), "player stagger behavior unchanged");
         Check(!Rules.IgnoreStaggerDamage(false, true, true), "tamed creatures unchanged");
         // Replay the observed rapid-hit interval: ignored attacks must not refill the bar.
-        float staggerBar = 240;
+        Check(Rules.ResetEnemyStagger(false, false), "wild enemies reset on stagger entry");
+        Check(!Rules.ResetEnemyStagger(true, false), "players keep their native meter");
+        Check(!Rules.ResetEnemyStagger(false, true), "tamed creatures keep their native meter");
+        float staggerBar = Rules.ResetEnemyStagger(false, false) ? 0 : 240;
         foreach (float damage in new[] { 81f, 189f, 121f })
         {
-            staggerBar -= 48f * .8f;
+            staggerBar = Math.Max(0, staggerBar - 48f * .8f);
             if (!Rules.IgnoreStaggerDamage(false, false, true)) staggerBar += damage;
         }
-        Near(staggerBar, 124.8, .001, "critical hits during animation allow uninterrupted recovery");
+        Near(staggerBar, 0, .001, "stagger meter remains empty throughout critical hits");
+        if (!Rules.IgnoreStaggerDamage(false, false, false)) staggerBar += 39f;
+        Near(staggerBar, 39, .001, "first post-animation hit starts accumulating from zero");
         var runtime = new RuntimeState();
         Check(!runtime.Running(true), "rules inactive until hooks are ready");
         runtime.Ready = true;
@@ -44,6 +49,9 @@ internal static class Program
             var guard = dll.Types.Single(t => t.Name == "StaggerDamagePatch").Methods.Single(m => m.Name == "Prefix");
             Check(guard.Body.Instructions.Any(i => i.Operand is MethodReference mr && mr.Name == "IgnoreStaggerDamage"), "compiled guard uses tested state rule");
             Check(!guard.Body.Instructions.Any(i => i.Operand is MethodReference mr && new[] { "ApplyDamage", "SetHealth", "Damage" }.Contains(mr.Name)), "guard does not alter health damage");
+            var reset = dll.Types.Single(t => t.Name == "StaggerPatch").Methods.Single(m => m.Name == "Postfix");
+            Check(reset.Body.Instructions.Any(i => i.Operand is MethodReference mr && mr.Name == "ResetEnemyStagger"), "compiled entry hook uses reset rule");
+            Check(reset.Body.Instructions.Any(i => i.OpCode.Code == Mono.Cecil.Cil.Code.Stind_R4), "entry hook writes the reset meter");
             var plugin = dll.Types.Single(t => t.Name == "Plugin");
             Check(!plugin.Methods.Single(m => m.Name == "Failure").Body.Instructions.Any(i => i.Operand is MethodReference mr && mr.Name == "set_Value"), "fault cannot persist disabled state");
             Check(plugin.Methods.Single(m => m.Name == "Awake").Body.Instructions.Any(i => i.Operand is MethodReference mr && mr.Name == "set_Value"), "startup explicitly enables config");
