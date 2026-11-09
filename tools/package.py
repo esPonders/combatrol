@@ -47,4 +47,4 @@ def package(name, version, folder, description, readme, suffix=''):
 
 
 if __name__ == '__main__':
-    package('RolCombat', '1.0.0', 'RolCombat', 'Combat roles: tower defense, agile one-handed dodging, and elite balance.', 'README.md')
+    package('RolCombat', '1.0.1', 'RolCombat', 'Combat roles: tower defense, agile one-handed dodging, and elite balance.', 'README.md')

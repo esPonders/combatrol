@@ -42,6 +42,9 @@ namespace Valmods.TowerGuard
     {
         internal static bool Finite(float value) => !float.IsNaN(value) && !float.IsInfinity(value);
 
+        internal static float RecoveryDelta(float dt, float healthBonus) =>
+            Finite(healthBonus) && healthBonus >= 0f ? dt / (1f + healthBonus) : dt;
+
         internal static float RescaledHealth(float health, float oldMax, float newMax) =>
             (float)(Math.Min(1d, Math.Max(0d, (double)health / oldMax)) * newMax);
 

@@ -41,6 +41,12 @@ internal static class Program
         Near(1920 * .3 / 1.2, 480, .001, "original stagger threshold retained");
         Near(Rules.RescaledHealth(800, 1600, 1920), 960, .001, "existing injuries retain fraction");
         Near(Rules.RescaledHealth(960, 1920, 1920), 960, .001, "reload cannot compound health");
+        Near(1920f * .3f / 5f * Rules.RecoveryDelta(1f, .2f), 96, .0001, "elite decay retains original 96 points per second");
+        Near(2880f * .3f / 5f * Rules.RecoveryDelta(1f, .2f), 144, .0001, "two-star decay retains original 144 points per second");
+        Near(Rules.RecoveryDelta(.02f, 0), .02, .000001, "zero health bonus leaves native delta unchanged");
+        float bar = 480;
+        for (int i = 0; i < 250; i++) bar = Math.Max(0, bar - 1920f * .3f / 5f * Rules.RecoveryDelta(.02f, .2f));
+        Near(bar, 0, .01, "original full bar recovers in five seconds");
         var gate = new EquipGate();
         gate.Observe(true, 10);
         Check(!gate.Ready(11.99f) && gate.Ready(12), "two continuous seconds required");

@@ -12,7 +12,7 @@ namespace Valmods.TowerGuard
     public sealed class Plugin : BaseUnityPlugin
     {
         public const string Id = "ponders.valmods.towerguard";
-        public const string Version = "1.0.0";
+        public const string Version = "1.0.1";
         private const string RewardRpc = "Valmods_TowerPreparation_v1";
         internal static Plugin Instance;
         private Harmony harmony;
@@ -411,10 +411,17 @@ namespace Valmods.TowerGuard
     }
     internal static class RecoveryPatch
     {
-        internal static void Prefix(Character __instance, out float? __state)
+        internal static void Prefix(Character __instance, ref float __0, out float? __state)
         {
             __state = null;
-            try { if (Plugin.NumbActive(__instance)) __state = Plugin.Stagger(__instance); }
+            try
+            {
+                // Native UpdateStagger decays from max health * factor, not GetStaggerTreshold.
+                // Its only use of dt is that decay: compensate dt to retain the pre-bonus rate.
+                if (Plugin.EliteHealthApplies(__instance) && Plugin.Owned(__instance))
+                    __0 = Rules.RecoveryDelta(__0, Plugin.Instance.EliteHealthBonus.Value);
+                if (Plugin.NumbActive(__instance)) __state = Plugin.Stagger(__instance);
+            }
             catch (Exception ex) { Plugin.Failure(ex); }
         }
         internal static void Postfix(Character __instance, float? __state)

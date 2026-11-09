@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.0.1
+- Preserve original stagger recovery speed when increasing elite health.
+- Keep original stagger threshold, Numbness behavior, and other combat rules.
+- Retire the 1.0.0 release and tag.
+
 ## 1.0.0
 - Primera distribución mediante GitHub Releases, con ZIP importable en r2modman.
 - Incluye las reglas de 0.1.8 sin cambios de equilibrio.

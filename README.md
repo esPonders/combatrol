@@ -4,7 +4,7 @@ A combat mod for Valheim featuring tower shield bonuses, Agility when using a on
 
 ## Download
 
-Download **Valmods.RolCombat-1.0.0.zip** from the **Assets** section of [release 1.0.0](https://github.com/esPonders/combatrol/releases/tag/v1.0.0). You do not need the automatic “Source code” downloads.
+Download **Valmods.RolCombat-1.0.1.zip** from the **Assets** section of [release 1.0.1](https://github.com/esPonders/combatrol/releases/tag/v1.0.1). You do not need the automatic “Source code” downloads.
 
 ## Install with r2modman
 
