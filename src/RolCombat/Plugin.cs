@@ -12,7 +12,7 @@ namespace Valmods.TowerGuard
     public sealed class Plugin : BaseUnityPlugin
     {
         public const string Id = "ponders.valmods.towerguard";
-        public const string Version = "1.0.1";
+        public const string Version = "1.0.2";
         private const string RewardRpc = "Valmods_TowerPreparation_v1";
         internal static Plugin Instance;
         private Harmony harmony;
@@ -59,8 +59,14 @@ namespace Valmods.TowerGuard
             Enabled = Config.Bind("General", "Enabled", true, "Activar las reglas. En multijugador todos deben usar la misma versión y configuración.");
             // Always start enabled, including profiles that saved false in an older release.
             Enabled.Value = true;
-            StarBonus = Config.Bind("Elites", "DamageBonusPerStar", .25f,
+            StarBonus = Config.Bind("Elites", "DamageBonusPerStar", .20f,
                 new ConfigDescription("Incremento aditivo por estrella respecto al daño normal. No altera vida, botín ni criaturas domesticadas.", new AcceptableValueRange<float>(0f, 1f)));
+            var balanceRevision = Config.Bind("Elites", "BalanceRevision", 0, "Versión de migración de los valores predeterminados.");
+            if (balanceRevision.Value < 2)
+            {
+                if (Math.Abs(StarBonus.Value - .25f) < .00001f) StarBonus.Value = .20f;
+                balanceRevision.Value = 2;
+            }
             Reduction = Config.Bind("Tower", "IncomingDamageReduction", .15f,
                 new ConfigDescription("Reducción de daño entrante con un torre equipado, antes del bloqueo. No basta llevarlo en el inventario.", new AcceptableValueRange<float>(0f, .9f)));
             Preparation = Config.Bind("Tower", "StaggerFractionPerBlock", .20f,
@@ -70,7 +76,7 @@ namespace Valmods.TowerGuard
             DodgeExtension = Config.Bind("Agile", "ExtraInvulnerabilitySeconds", .10f,
                 new ConfigDescription("Segundos adicionales de invulnerabilidad con arma de una mano y sin escudo.", new AcceptableValueRange<float>(0f, .3f)));
             EliteHealthBonus = Config.Bind("Elites", "ExtraHealth", .20f,
-                new ConfigDescription("Vida adicional sobre la vida original de criaturas con estrellas. El umbral de desequilibrio conserva su valor anterior.", new AcceptableValueRange<float>(0f, 2f)));
+                new ConfigDescription("Vida adicional sobre la vida original de criaturas con estrellas. El umbral y la recuperación de desequilibrio usan los valores de una criatura sin estrellas.", new AcceptableValueRange<float>(0f, 2f)));
             harmony = new Harmony(Id);
             try
             {
@@ -129,7 +135,7 @@ namespace Valmods.TowerGuard
                 harmony.Patch(Required(typeof(Humanoid), "BlockAttack", typeof(bool), typeof(HitData), typeof(Character)),
                     prefix: new HarmonyMethod(typeof(MultiplayerBlockPatch), nameof(MultiplayerBlockPatch.Prefix)) { priority = Priority.First });
                 runtime.Ready = true;
-                Logger.LogInfo("RolCombat " + Version + ": " + RuntimeStatus + ". +25% daño/estrella, torre -15% daño y preparación 20% (valores configurables). Entumecimiento: recuperación suspendida 2 s. Sin escudo y con arma de una mano: esquiva -25% vigor y +0,10 s de invulnerabilidad.");
+                Logger.LogInfo("RolCombat " + Version + ": " + RuntimeStatus + ". +20% daño/estrella, torre -15% daño y preparación 20% (valores configurables). Entumecimiento: recuperación suspendida 2 s. Sin escudo y con arma de una mano: esquiva -25% vigor y +0,10 s de invulnerabilidad.");
             }
             catch (Exception ex)
             {
@@ -417,9 +423,9 @@ namespace Valmods.TowerGuard
             try
             {
                 // Native UpdateStagger decays from max health * factor, not GetStaggerTreshold.
-                // Its only use of dt is that decay: compensate dt to retain the pre-bonus rate.
+                // Its only use of dt is that decay: compensate dt for both stars and extra health to use the unstarred rate.
                 if (Plugin.EliteHealthApplies(__instance) && Plugin.Owned(__instance))
-                    __0 = Rules.RecoveryDelta(__0, Plugin.Instance.EliteHealthBonus.Value);
+                    __0 = Rules.RecoveryDelta(__0, Plugin.Instance.EliteHealthBonus.Value, __instance.GetLevel());
                 if (Plugin.NumbActive(__instance)) __state = Plugin.Stagger(__instance);
             }
             catch (Exception ex) { Plugin.Failure(ex); }
@@ -555,7 +561,7 @@ namespace Valmods.TowerGuard
             try
             {
                 if (Plugin.EliteHealthApplies(__instance))
-                    __result /= 1f + Plugin.Instance.EliteHealthBonus.Value;
+                    __result /= Rules.StaggerHealthScale(__instance.GetLevel(), Plugin.Instance.EliteHealthBonus.Value);
             }
             catch (Exception ex) { Plugin.Failure(ex); }
         }

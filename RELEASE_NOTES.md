@@ -1,11 +1,13 @@
-# RolCombat 1.0.1
+# RolCombat 1.0.2
 
-Fixes stagger recovery for starred enemies with the additional health bonus. Their stagger threshold and recovery rate now both match the values from before that bonus.
+Starred enemies now deal +20% damage per star: 120% for one star and 140% for two stars, replacing the vanilla star damage bonus.
 
-For example, a one-star Fuling berserker keeps 1,920 health and a stagger threshold of 480, while stagger recovery returns from 115.2 to 96 points per second. Numbness still pauses recovery for 2 seconds and contributes 20% of the threshold when the increment fits without staggering.
+Their stagger threshold and recovery rate now match an unstarred creature of the same type. A Fuling berserker uses a threshold of 240 and recovers 48 stagger points per second at every star level. Starred enemies keep their additional health, including the mod's 20% health bonus.
 
-No other balance changes. Player recovery and unstarred enemies are unaffected. This correction has been checked against the installed game's recovery code and offline tests; in-game multiplayer retesting is still needed.
+Tower blocks still contribute 20% of the threshold only when the complete increment fits without staggering the enemy. Numbness pauses recovery for 2 seconds. Tower damage reduction and Agility are unchanged.
 
-Download **Valmods.RolCombat-1.0.1.zip** from **Assets** and import the complete ZIP in r2modman using **Settings → Import local mod**. Remove or disable older copies first. All players must use the same version and settings. Combat Recorder 0.1.7 remains compatible.
+Existing profiles using the previous 25% damage default migrate to 20% on first launch; other custom values are preserved. All players and dedicated servers must use the same version and settings.
 
-The previous 1.0.0 release and tag have been retired to avoid distributing the affected version.
+Download **Valmods.RolCombat-1.0.2.zip** from **Assets**, then import the complete ZIP through **Settings → Import local mod** in r2modman. Disable or remove older copies. Combat Recorder 0.1.7 remains compatible.
+
+Verified with offline rules and assembly checks; in-game testing is still needed. The preceding release is retired after this package is published.

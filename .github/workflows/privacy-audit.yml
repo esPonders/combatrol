@@ -1,7 +1,7 @@
 name: Audit release paths
 on:
   workflow_run:
-    workflows: [Publish RolCombat 1.0.1]
+    workflows: [Publish RolCombat 1.0.2]
     types: [completed]
     branches: [main]
   workflow_dispatch:
@@ -26,8 +26,8 @@ jobs:
               h = dict(headers)
               if accept: h['Accept'] = accept
               with urllib.request.urlopen(urllib.request.Request(url, headers=h)) as r: return r.read()
-          release = json.loads(get(base + '/releases/tags/v1.0.1'))
-          asset = next(a for a in release['assets'] if a['name'] == 'Valmods.RolCombat-1.0.1.zip')
+          release = json.loads(get(base + '/releases/tags/v1.0.2'))
+          asset = next(a for a in release['assets'] if a['name'] == 'Valmods.RolCombat-1.0.2.zip')
           data = get(asset['url'], 'application/octet-stream')
           print('Release ZIP SHA256:', hashlib.sha256(data).hexdigest())
           personal = []
