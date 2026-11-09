@@ -1,13 +1,11 @@
-# RolCombat 1.0.2
+# RolCombat 1.0.3
 
-Starred enemies now deal +20% damage per star: 120% for one star and 140% for two stars, replacing the vanilla star damage bonus.
+Enemies cannot accumulate additional stagger damage while their stagger animation is active. Health damage and critical damage bonuses are unchanged; their existing stagger meter continues recovering normally and is not forcibly emptied.
 
-Their stagger threshold and recovery rate now match an unstarred creature of the same type. A Fuling berserker uses a threshold of 240 and recovers 48 stagger points per second at every star level. Starred enemies keep their additional health, including the mod's 20% health bonus.
+Once the animation ends, attacks accumulate stagger again. This rule applies to wild enemies at all star levels; players and tamed creatures retain their normal behavior. Tower Numbness already rejects staggered enemies and does not pause recovery during this state.
 
-Tower blocks still contribute 20% of the threshold only when the complete increment fits without staggering the enemy. Numbness pauses recovery for 2 seconds. Tower damage reduction and Agility are unchanged.
+Elite damage remains +20% per star. Elite stagger thresholds and recovery remain equivalent to the unstarred creature of the same type. Tower defense, Agility, and enemy health bonuses are unchanged.
 
-Existing profiles using the previous 25% damage default migrate to 20% on first launch; other custom values are preserved. All players and dedicated servers must use the same version and settings.
+Download **Valmods.RolCombat-1.0.3.zip** from **Assets** and import the complete ZIP using **Settings → Import local mod** in r2modman. Disable or remove older copies. All players and dedicated servers must update. Combat Recorder 0.1.7 remains compatible.
 
-Download **Valmods.RolCombat-1.0.2.zip** from **Assets**, then import the complete ZIP through **Settings → Import local mod** in r2modman. Disable or remove older copies. Combat Recorder 0.1.7 remains compatible.
-
-Verified with offline rules and assembly checks; in-game testing is still needed. The preceding release is retired after this package is published.
+Validated with offline regression and assembly checks. In-game validation is still needed. The preceding release is retired after successful publication.

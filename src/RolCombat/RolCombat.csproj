@@ -3,7 +3,7 @@
     <TargetFramework>netstandard2.1</TargetFramework>
     <LangVersion>latest</LangVersion>
     <AssemblyName>Valmods.RolCombat</AssemblyName>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
     <Nullable>disable</Nullable>
     <DebugType>none</DebugType>
     <DebugSymbols>false</DebugSymbols>

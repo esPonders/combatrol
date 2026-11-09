@@ -1,4 +1,4 @@
-name: Publish RolCombat 1.0.2
+name: Publish RolCombat 1.0.3
 on:
   push:
     branches: [main]
@@ -7,7 +7,7 @@ on:
 permissions:
   contents: write
 concurrency:
-  group: release-v1.0.2
+  group: release-v1.0.3
   cancel-in-progress: false
 jobs:
   release:

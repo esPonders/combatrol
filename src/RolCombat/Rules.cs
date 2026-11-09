@@ -40,6 +40,9 @@ namespace Valmods.TowerGuard
     // Pure rules, also executed by the offline test suite.
     internal static class Rules
     {
+        internal static bool IgnoreStaggerDamage(bool player, bool tamed, bool staggering) =>
+            !player && !tamed && staggering;
+
         internal static bool Finite(float value) => !float.IsNaN(value) && !float.IsInfinity(value);
 
         internal static float StaggerHealthScale(int level, float healthBonus) =>

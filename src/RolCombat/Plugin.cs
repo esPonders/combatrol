@@ -12,7 +12,7 @@ namespace Valmods.TowerGuard
     public sealed class Plugin : BaseUnityPlugin
     {
         public const string Id = "ponders.valmods.towerguard";
-        public const string Version = "1.0.2";
+        public const string Version = "1.0.3";
         private const string RewardRpc = "Valmods_TowerPreparation_v1";
         internal static Plugin Instance;
         private Harmony harmony;
@@ -120,6 +120,8 @@ namespace Valmods.TowerGuard
                 Patch(Required(typeof(Humanoid), "BlockAttack", typeof(bool), typeof(HitData), typeof(Character)), typeof(BlockPatch), nameof(BlockPatch.Prefix), nameof(BlockPatch.Postfix));
                 Patch(Required(typeof(Character), "Awake", typeof(void)), typeof(NetworkPatch), null, nameof(NetworkPatch.Postfix));
                 Patch(Required(typeof(Character), "UpdateStagger", typeof(void), typeof(float)), typeof(RecoveryPatch), nameof(RecoveryPatch.Prefix), nameof(RecoveryPatch.Postfix));
+                Patch(Required(typeof(Character), "AddStaggerDamage", typeof(bool), typeof(float), typeof(Vector3), typeof(HitData)),
+                    typeof(StaggerDamagePatch), nameof(StaggerDamagePatch.Prefix), null);
                 Patch(Required(typeof(Character), "Stagger", typeof(void), typeof(Vector3)), typeof(StaggerPatch), null, nameof(StaggerPatch.Postfix));
                 foreach (var method in typeof(ItemDrop.ItemData).GetMethods(BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic))
                     if (method.Name == "GetTooltip" && method.ReturnType == typeof(string) &&
@@ -439,6 +441,21 @@ namespace Valmods.TowerGuard
                     Plugin.Stagger(__instance) = window.Preserve(Time.time, __state.Value, Plugin.Stagger(__instance));
             }
             catch (Exception ex) { Plugin.Failure(ex); }
+        }
+    }
+    internal static class StaggerDamagePatch
+    {
+        internal static bool Prefix(Character __instance, ref bool __result)
+        {
+            try
+            {
+                // Only suppress stagger accumulation; damage and critical bonuses run normally.
+                if (!Plugin.Active || !Plugin.Owned(__instance) ||
+                    !Rules.IgnoreStaggerDamage(__instance.IsPlayer(), __instance.IsTamed(), __instance.IsStaggering())) return true;
+                __result = false;
+                return false;
+            }
+            catch (Exception ex) { Plugin.Failure(ex); return true; }
         }
     }
     internal static class StaggerPatch
